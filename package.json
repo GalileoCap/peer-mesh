@@ -2,7 +2,7 @@
   "name": "react-peer-mesh",
   "version": "0.0.1",
   "description": "",
-  "keywords": ["react"],
+  "keywords": ["react", "peer-to-peer", "peerjs"],
   "author": "GalileoCap (https://galileocap.me)",
   "license": "ISC",
   "homepage": "https://github.com/GalileoCap/react-peer-mesh",
