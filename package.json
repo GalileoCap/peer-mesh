@@ -14,7 +14,7 @@
     "type": "git",
     "url": "https://github.com/GalileoCap/react-peer-mesh.git"
   },
-  "main": "src/index.jsx",
+  "main": "src/index.js",
   "dependencies": {
     "immer": "^9.0.21",
     "peerjs": "^1.4.7",

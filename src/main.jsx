@@ -1,11 +1,14 @@
 import {
   createContext, useContext,
+  useEffect,
 } from 'react';
 import { useImmerReducer } from 'use-immer';
+import Peer from 'peerjs';
 
-export const MY_PEER = 0;
-export const LEADER_PEER = 1;
-export const ALL_PEERS = 2;
+import {
+  findPeer,
+  MY_PEER, LEADER_PEER, ALL_PEERS,
+} from './utils.js';
 
 const StatesContext = createContext(null);
 const DispatchContext = createContext(null);
@@ -42,6 +45,9 @@ export function MeshProvider({ defaultValues, children }) {
       _leader: false,
     },
   ]);
+  useEffect(() => {
+    //TODO: Create peer
+  }, []);
 
   return (
     <StatesContext.Provider value={states}>
@@ -50,15 +56,6 @@ export function MeshProvider({ defaultValues, children }) {
       </DispatchContext.Provider>
     </StatesContext.Provider>
   );
-}
-
-function findPeer(peers, peerId) {
-  switch (peerId) {
-  case MY_PEER: return peers.find(peerState => peerState._mine);
-  case LEADER_PEER: return peers.find(peerState => peerState._leader);
-  case ALL_PEERS: return peers;
-  default: return peers.find(peerState => peerState._id === peerId);
-  }
 }
 
 export function useMeshContext(peerId, cb) {
