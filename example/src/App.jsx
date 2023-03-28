@@ -1,5 +1,5 @@
 import {
-  useMeshContext,
+  useMeshContext, useDispatchUpdate,
   MY_PEER, LEADER_PEER, ALL_PEERS,
 } from 'react-peer-mesh';
 
@@ -20,7 +20,8 @@ export default function App() {
   const leaderState = useMeshContext(LEADER_PEER);
   const allStates = useMeshContext(ALL_PEERS);
 
-  const onChange = () => window.setValue((draft) => { draft.number++ });
+  const dispatchUpdate = useDispatchUpdate();
+  const onChange = () => dispatchUpdate((draft) => draft.number++);
 
   return (
     <div className="App">
