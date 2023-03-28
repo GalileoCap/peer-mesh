@@ -14,3 +14,19 @@ svg {
   display: block;
   max-width: 100%;
 }
+
+hr {
+  border-top: 3px solid #bbb;
+}
+
+.PeerState {
+  background-color: grey;
+}
+
+.PeerState.mine {
+  background-color: pink;
+}
+
+.PeerState.leader {
+  background-color: lightblue;
+}

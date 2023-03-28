@@ -1,8 +1,12 @@
 {
   "name": "react-peer-mesh",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
-  "keywords": ["react", "peer-to-peer", "peerjs"],
+  "keywords": [
+    "react",
+    "peer-to-peer",
+    "peerjs"
+  ],
   "author": "GalileoCap (https://galileocap.me)",
   "license": "ISC",
   "homepage": "https://github.com/GalileoCap/react-peer-mesh",
@@ -10,6 +14,11 @@
     "type": "git",
     "url": "https://github.com/GalileoCap/react-peer-mesh.git"
   },
-
-  "main": "src/index.js"
+  "main": "src/index.jsx",
+  "dependencies": {
+    "immer": "^9.0.21",
+    "peerjs": "^1.4.7",
+    "react": "^18.2.0",
+    "use-immer": "^0.8.1"
+  }
 }
