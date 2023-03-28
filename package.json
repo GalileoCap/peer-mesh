@@ -1,0 +1,15 @@
+{
+  "name": "react-peer-mesh",
+  "version": "0.0.1",
+  "description": "",
+  "keywords": ["react"],
+  "author": "GalileoCap (https://galileocap.me)",
+  "license": "ISC",
+  "homepage": "https://github.com/GalileoCap/react-peer-mesh",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GalileoCap/react-peer-mesh.git"
+  },
+
+  "main": "src/index.js"
+}
