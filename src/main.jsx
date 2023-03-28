@@ -1,6 +1,6 @@
 import {
   createContext, useContext,
-  useEffect,
+  useState, useEffect,
 } from 'react';
 import { useImmerReducer } from 'use-immer';
 import Peer from 'peerjs';
@@ -13,46 +13,52 @@ import {
 const StatesContext = createContext(null);
 const DispatchContext = createContext(null);
 
+function handleInit({ defaultValues, dispatch, setDone }) {
+  const peer = new Peer();
+  peer.on('open', () => {
+    dispatch({
+      type: 'newPeer',
+      newPeer: {
+        _peer: peer,
+        _id: peer.id,
+        _mine: true,
+        _leader: true,
+      },
+    });
+    setDone(true);
+  });
+  //TODO: other peer.on
+}
+
+function handleNewPeer(draft, { newPeer }) {
+  draft.push(newPeer);
+}
+
 function handleUpdate(draft, { cb }) {
   cb(findPeer(draft, MY_PEER));
   //TODO: Send update to peers
 }
 
-export function MeshProvider({ defaultValues, children }) {
+export function MeshProvider({ defaultValues, loading, children }) {
+  const [ done, setDone ] = useState(false);
   const [ states, dispatch ] = useImmerReducer(
     (draft, action) => {
       switch (action.type) {
+      case 'init': handleInit(action); break;
+      case 'newPeer': handleNewPeer(draft, action); break;
       case 'update': handleUpdate(draft, action); break;
       default: console.log(action);
       }
-    }, [
-    {
-      ...defaultValues,
-      _id: 'myId',
-      _mine: true,
-      _leader: false,
-    },
-    {
-      ...defaultValues,
-      _id: 'leaderId',
-      _mine: false,
-      _leader: true,
-    },
-    {
-      ...defaultValues,
-      _id: 'randoId',
-      _mine: false,
-      _leader: false,
-    },
-  ]);
+    }, []
+  );
   useEffect(() => {
-    //TODO: Create peer
+    dispatch({ ...defaultValues, dispatch, setDone, type: 'init' });
   }, []);
 
   return (
     <StatesContext.Provider value={states}>
       <DispatchContext.Provider value={dispatch}>
-        {children}
+        { done ? children : loading }
       </DispatchContext.Provider>
     </StatesContext.Provider>
   );
