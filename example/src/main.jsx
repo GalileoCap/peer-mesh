@@ -6,7 +6,7 @@ import App from './App';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <MeshProvider defaultValues={{number: 0}}>
+  <MeshProvider defaultValues={{number: 0, prevNumber: undefined}}>
     <React.StrictMode>
       <App />
     </React.StrictMode>

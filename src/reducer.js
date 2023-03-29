@@ -1,5 +1,6 @@
 import { useImmerReducer } from 'use-immer';
 import Peer from 'peerjs';
+import _ from 'lodash';
 
 import {
   findPeer, findPeerIdx,
@@ -56,9 +57,7 @@ function handleConnectTo(draft, { peerId, metadata, dispatch }) {
   const newConn = me._peer.connect(peerId, {
     metadata: {
       ...metadata,
-      values: {
-        number: me.number, //TODO: Filter private keys
-      },
+      values: _.omitBy(me, (value, key) => key.startsWith('_')),
     },
   }); 
   newConn.on('open', () => {
@@ -82,9 +81,7 @@ function handleOnData(draft, { senderId, data }) {
     const me = findPeer(draft, MY_PEER);
     peer._conn.send({
       type: 'update',
-      values: {
-        number: me.number,
-      },
+      values: _.omitBy(me, (value, key) => key.startsWith('_')),
     });
     break;
 
@@ -104,9 +101,7 @@ function handleUpdate(draft, { cb }) {
   draft.forEach((peer) => {
     if (!peer._mine) peer._conn.send({
       type: 'update',
-      values: {
-        number: me.number,
-      },
+      values: _.omitBy(me, (value, key) => key.startsWith('_')),
     });
   });
 }

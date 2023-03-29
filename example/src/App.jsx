@@ -14,6 +14,7 @@ function PeerState({ state }) {
       <p>Mine: {state._mine ? 'true' : 'false'}</p>
       <p>Leader: {state._leader ? 'true' : 'false'}</p>
       <p>Number: {state.number}</p>
+      <p>PrevNumber: {state.prevNumber}</p>
     </div>
   );
 }
@@ -32,7 +33,10 @@ export default function App() {
   const allStates = useMeshContext(ALL_PEERS);
 
   const dispatchUpdate = useDispatchUpdate();
-  const onIncNumber = () => dispatchUpdate((draft) => draft.number++);
+  const onIncNumber = () => dispatchUpdate((draft) => {
+    draft.prevNumber = draft.number;
+    draft.number++;
+  });
 
   const [ peerId, setPeerId ] = useState('');
   const onChange = (event) => setPeerId(event.target.value);

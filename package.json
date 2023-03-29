@@ -17,6 +17,7 @@
   "main": "src/index.js",
   "dependencies": {
     "immer": "^9.0.21",
+    "lodash": "^4.17.21",
     "peerjs": "^1.4.7",
     "react": "^18.2.0",
     "use-immer": "^0.8.1"
