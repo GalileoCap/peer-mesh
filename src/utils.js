@@ -10,3 +10,11 @@ export function findPeer(peers, peerId) {
   default: return peers.find(peerState => peerState._id === peerId);
   }
 }
+
+export function findPeerIdx(peers, peerId) {
+  switch (peerId) {
+  case MY_PEER: return peers.findIndex(peerState => peerState._mine);
+  case LEADER_PEER: return peers.findIndex(peerState => peerState._leader);
+  default: return peers.findIndex(peerState => peerState._id === peerId);
+  }
+}

@@ -2,17 +2,15 @@ import { useImmerReducer } from 'use-immer';
 import Peer from 'peerjs';
 
 import {
-  findPeer,
+  findPeer, findPeerIdx,
   MY_PEER, LEADER_PEER, ALL_PEERS,
 } from './utils.js';
 
 let DefaultValues = {};
 
-function dispatchNewPeer({ dispatch, newConn }) {
-  const values = (newConn.metadata.values !== undefined ? newConn.metadata.values : DefaultValues);
-
+function dispatchNewPeer({ dispatch, newConn, values }) {
   const newPeer = {
-    ...values, //TODO: Replace values with theirs when I'm the one connecting 
+    ...values,
     _conn: newConn,
     _id: newConn.peer,
     _mine: false,
@@ -36,7 +34,16 @@ function handleInit({ dispatch, setDone }) {
     });
     setDone(true);
   });
-  peer.on('connection', (newConn) => dispatchNewPeer({ dispatch, newConn }));
+  peer.on('connection', (newConn) => {
+    dispatchNewPeer({
+      dispatch,
+      newConn, values: newConn.metadata.values,
+    });
+    newConn.on('data', (data) => dispatch({
+      type: 'onData',
+      senderId: newConn.peer, data,
+    }));
+  });
   //TODO: other peer.on
 }
 
@@ -54,13 +61,54 @@ function handleConnectTo(draft, { peerId, metadata, dispatch }) {
       },
     },
   }); 
-  newConn.on('open', () => dispatchNewPeer({ dispatch, newConn }));
+  newConn.on('open', () => {
+    dispatchNewPeer({
+      dispatch,
+      newConn, values: DefaultValues,
+    });
+    newConn.send({type: 'askValues'});
+  });
+  newConn.on('data', (data) => dispatch({
+    type: 'onData',
+    senderId: newConn.peer, data,
+  }));
   //TODO: other newConn.on
 }
 
+function handleOnData(draft, { senderId, data }) {
+  const peer = findPeer(draft, senderId);
+  switch (data.type) {
+  case 'askValues':
+    const me = findPeer(draft, MY_PEER);
+    peer._conn.send({
+      type: 'update',
+      values: {
+        number: me.number,
+      },
+    });
+    break;
+
+  case 'update':
+    const peerIdx = findPeerIdx(draft, senderId);
+    draft[peerIdx] = {...draft[peerIdx], ...data.values};
+    break;
+
+  default:
+    console.log('Unhandled message (senderId, data):', senderId, data);
+  }
+}
+
 function handleUpdate(draft, { cb }) {
-  cb(findPeer(draft, MY_PEER));
-  //TODO: Send update to peers
+  const me = findPeer(draft, MY_PEER);
+  cb(me);
+  draft.forEach((peer) => {
+    if (!peer._mine) peer._conn.send({
+      type: 'update',
+      values: {
+        number: me.number,
+      },
+    });
+  });
 }
 
 export function useReducer(dflt) {
@@ -73,6 +121,7 @@ export function useReducer(dflt) {
           break;
         case 'newPeer': handleNewPeer(draft, action); break;
         case 'connectTo': handleConnectTo(draft, action); break;
+        case 'onData': handleOnData(draft, action); break;
         case 'update': handleUpdate(draft, action); break;
         default: console.log('Unhandeled action', action);
       }
