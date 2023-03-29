@@ -5,19 +5,8 @@ import { MeshProvider } from 'react-peer-mesh';
 import App from './App';
 import './index.css';
 
-function Loading() {
-  return (
-    <div id='Loading'>
-      Loading...
-    </div>
-  );
-}
-
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <MeshProvider
-    defaultValues={{number: 0}}
-    loading={<Loading />}
-  >
+  <MeshProvider defaultValues={{number: 0}}>
     <React.StrictMode>
       <App />
     </React.StrictMode>

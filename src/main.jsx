@@ -39,7 +39,7 @@ function handleUpdate(draft, { cb }) {
   //TODO: Send update to peers
 }
 
-export function MeshProvider({ defaultValues, loading, children }) {
+export function MeshProvider({ defaultValues, children }) {
   const [ done, setDone ] = useState(false);
   const [ states, dispatch ] = useImmerReducer(
     (draft, action) => {
@@ -58,7 +58,7 @@ export function MeshProvider({ defaultValues, loading, children }) {
   return (
     <StatesContext.Provider value={states}>
       <DispatchContext.Provider value={dispatch}>
-        { done ? children : loading }
+        { children }
       </DispatchContext.Provider>
     </StatesContext.Provider>
   );

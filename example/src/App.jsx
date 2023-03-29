@@ -14,8 +14,15 @@ function PeerState({ state }) {
   );
 }
 
+function Loading() {
+  return (
+    <div id='Loading'>
+      Loading...
+    </div>
+  );
+}
+
 export default function App() {
-  const myId = useMeshContext(MY_PEER, (peerState) => peerState._id);
   const myState = useMeshContext(MY_PEER)
   const leaderState = useMeshContext(LEADER_PEER);
   const allStates = useMeshContext(ALL_PEERS);
@@ -25,12 +32,17 @@ export default function App() {
 
   return (
     <div className="App">
-      <p>My id: {myId}</p>
-      <PeerState state={myState} />
-      <PeerState state={leaderState} />
-      <button onClick={onChange}>Change</button>
-      <hr />
-      { allStates.map((peerState, idx) => <PeerState state={peerState} key={idx} />) }
+      {
+        myState === undefined
+        ? <Loading />
+        : <>
+          <PeerState state={myState} />
+          <PeerState state={leaderState} />
+          <button onClick={onChange}>Change</button>
+          <hr />
+          { allStates.map((peerState, idx) => <PeerState state={peerState} key={idx} />) }
+        </>
+      }
     </div>
   );
 }
