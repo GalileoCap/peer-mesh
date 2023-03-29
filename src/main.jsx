@@ -50,7 +50,7 @@ export function useDispatchUpdate() {
 
 export function useDispatchConnectTo() {
   const dispatch = useDispatchContext();
-  return (peerId, metadata) => dispatch({
+  return (peerId, metadata = {}) => dispatch({
     type: 'connectTo', dispatch,
     peerId, metadata,
   });

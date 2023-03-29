@@ -8,6 +8,19 @@ import {
 
 let DefaultValues = {};
 
+function dispatchNewPeer({ dispatch, newConn }) {
+  const values = (newConn.metadata.values !== undefined ? newConn.metadata.values : DefaultValues);
+
+  const newPeer = {
+    ...values, //TODO: Replace values with theirs when I'm the one connecting 
+    _conn: newConn,
+    _id: newConn.peer,
+    _mine: false,
+    _leader: false, //TODO: Get from metadata
+  };
+  dispatch({ type: 'newPeer', newPeer });
+}
+
 function handleInit({ dispatch, setDone }) {
   const peer = new Peer();
   peer.on('open', () => {
@@ -23,18 +36,7 @@ function handleInit({ dispatch, setDone }) {
     });
     setDone(true);
   });
-  peer.on('connection', (newConn) => {
-    dispatch({
-      type: 'newPeer',
-      newPeer: {
-        //TODO: metadata.defaultValues such as number
-        _conn: newConn,
-        _id: newConn.peer,
-        _mine: false,
-        _leader: false,
-      },
-    });
-  });
+  peer.on('connection', (newConn) => dispatchNewPeer({ dispatch, newConn }));
   //TODO: other peer.on
 }
 
@@ -43,19 +45,16 @@ function handleNewPeer(draft, { newPeer }) {
 }
 
 function handleConnectTo(draft, { peerId, metadata, dispatch }) {
-  const newConn = findPeer(draft, MY_PEER)._peer.connect(peerId); 
-  newConn.on('open', () => {  
-    dispatch({
-      type: 'newPeer',
-      newPeer: {
-        //TODO: metadata.defaultValues such as number
-        _conn: newConn,
-        _id: newConn.peer,
-        _mine: false,
-        _leader: false,
+  const me = findPeer(draft, MY_PEER);
+  const newConn = me._peer.connect(peerId, {
+    metadata: {
+      ...metadata,
+      values: {
+        number: me.number, //TODO: Filter private keys
       },
-    });
-  });
+    },
+  }); 
+  newConn.on('open', () => dispatchNewPeer({ dispatch, newConn }));
   //TODO: other newConn.on
 }
 
