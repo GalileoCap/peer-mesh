@@ -1,12 +1,16 @@
+import { useState } from 'react';
 import {
-  useMeshContext, useDispatchUpdate,
+  useMeshContext,
+  useDispatchUpdate, useDispatchConnectTo,
   MY_PEER, LEADER_PEER, ALL_PEERS,
 } from 'react-peer-mesh';
 
 function PeerState({ state }) {
+  const onCopyId = () => navigator.clipboard.writeText(state._id);
+
   return (
     <div className={'PeerState' + (state._mine ? ' mine' : '') + (state._leader ? ' leader' : '')}>
-      <p>Id: {state._id}</p>
+      <p onClick={onCopyId}>Id: {state._id}</p>
       <p>Mine: {state._mine ? 'true' : 'false'}</p>
       <p>Leader: {state._leader ? 'true' : 'false'}</p>
       <p>Number: {state.number}</p>
@@ -28,7 +32,12 @@ export default function App() {
   const allStates = useMeshContext(ALL_PEERS);
 
   const dispatchUpdate = useDispatchUpdate();
-  const onChange = () => dispatchUpdate((draft) => draft.number++);
+  const onIncNumber = () => dispatchUpdate((draft) => draft.number++);
+
+  const [ peerId, setPeerId ] = useState('');
+  const onChange = (event) => setPeerId(event.target.value);
+  const dispatchConnectTo = useDispatchConnectTo();
+  const onConnect = () => dispatchConnectTo(peerId);
 
   return (
     <div className="App">
@@ -38,7 +47,11 @@ export default function App() {
         : <>
           <PeerState state={myState} />
           <PeerState state={leaderState} />
-          <button onClick={onChange}>Change</button>
+          <div>
+            <button onClick={onIncNumber}>IncNumber</button>
+            <input type='text' onChange={onChange} value={peerId} />
+            <button onClick={onConnect}>Connect</button>
+          </div>
           <hr />
           { allStates.map((peerState, idx) => <PeerState state={peerState} key={idx} />) }
         </>

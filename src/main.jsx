@@ -27,11 +27,37 @@ function handleInit({ defaultValues, dispatch, setDone }) {
     });
     setDone(true);
   });
+  peer.on('connection', (newConn) => {
+    dispatch({
+      type: 'newPeer',
+      newPeer: {
+        _conn: newConn,
+        _id: newConn.peer,
+        _mine: false,
+        _leader: false,
+      },
+    });
+  });
   //TODO: other peer.on
 }
 
 function handleNewPeer(draft, { newPeer }) {
   draft.push(newPeer);
+}
+
+function handleConnectTo(draft, { peerId, metadata, dispatch }) {
+  const newConn = findPeer(draft, MY_PEER)._peer.connect(peerId); 
+  newConn.on('open', () => {  
+    dispatch({
+      type: 'newPeer',
+      newPeer: {
+        _conn: newConn,
+        _id: newConn.peer,
+        _mine: false,
+        _leader: false,
+      },
+    });
+  });
 }
 
 function handleUpdate(draft, { cb }) {
@@ -46,6 +72,7 @@ export function MeshProvider({ defaultValues, children }) {
       switch (action.type) {
       case 'init': handleInit(action); break;
       case 'newPeer': handleNewPeer(draft, action); break;
+      case 'connectTo': handleConnectTo(draft, action); break;
       case 'update': handleUpdate(draft, action); break;
       default: console.log(action);
       }
@@ -79,4 +106,12 @@ function useDispatchContext() {
 export function useDispatchUpdate() {
   const dispatch = useDispatchContext();
   return (cb) => dispatch({type: 'update', cb});
+}
+
+export function useDispatchConnectTo() {
+  const dispatch = useDispatchContext();
+  return (peerId, metadata) => dispatch({
+    type: 'connectTo', dispatch,
+    peerId, metadata,
+  });
 }
