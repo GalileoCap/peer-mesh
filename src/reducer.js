@@ -41,7 +41,7 @@ function handleInit({ dispatch, setDone }) {
       newConn, values: newConn.metadata.values,
     });
     newConn.on('data', (data) => dispatch({
-      type: 'onData',
+      type: 'onData', dispatch,
       senderId: newConn.peer, data,
     }));
   });
@@ -53,6 +53,8 @@ function handleNewPeer(draft, { newPeer }) {
 }
 
 function handleConnectTo(draft, { peerId, metadata, dispatch }) {
+  //TODO: Fix trying to connect twice to the same person
+
   const me = findPeer(draft, MY_PEER);
   const newConn = me._peer.connect(peerId, {
     metadata: {
@@ -68,13 +70,13 @@ function handleConnectTo(draft, { peerId, metadata, dispatch }) {
     newConn.send({type: 'askValues'});
   });
   newConn.on('data', (data) => dispatch({
-    type: 'onData',
+    type: 'onData', dispatch,
     senderId: newConn.peer, data,
   }));
   //TODO: other newConn.on
 }
 
-function handleOnData(draft, { senderId, data }) {
+function handleOnData(draft, { senderId, data, dispatch }) {
   const peer = findPeer(draft, senderId);
   switch (data.type) {
   case 'askValues':
@@ -83,12 +85,33 @@ function handleOnData(draft, { senderId, data }) {
       type: 'update',
       values: _.omitBy(me, (value, key) => key.startsWith('_')),
     });
+
+    const peers = findPeer(draft, ALL_PEERS);
+    peer._conn.send({
+      type: 'peersUpdate',
+      peers: peers.map((peerState, idx) => _.pick(peerState, ['_id', '_leader'])),
+    })
     break;
 
   case 'update':
     const peerIdx = findPeerIdx(draft, senderId);
     draft[peerIdx] = {...draft[peerIdx], ...data.values};
     break;
+
+  case 'peersUpdate':
+    data.peers.forEach(({ _id, _leader }) => {
+      const peerIdx = findPeerIdx(draft, _id);
+      if (peerIdx === -1) {
+        dispatch({
+          type: 'connectTo', dispatch: dispatch,
+          peerId: _id,
+        });
+      } else if (_leader) {
+        const currLeaderIdx = findPeerIdx(draft, LEADER_PEER);
+        draft[currLeaderIdx] = {...draft[currLeaderIdx], _leader: false};
+        draft[peerIdx] = {...draft[peerIdx], _leader: true};
+      }
+    });
 
   default:
     console.log('Unhandled message (senderId, data):', senderId, data);
