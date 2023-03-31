@@ -1,5 +1,5 @@
-export { createPeerStore } from './peerStore';
+export { PeerStore } from './peerStore';
 export {
-  usePeer, useInit, useSendUpdate, useConnectTo, useSendMessage, useSubscribeToMessage, useUnsubscribeFromMessage,
+  usePeer, useSendUpdate, useConnectTo, useSendMessage, useSubscribeToMessage, useUnsubscribeFromMessage,
   MY_PEER, LEADER_PEER, ALL_PEERS
 } from './utils';

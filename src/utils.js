@@ -26,6 +26,10 @@ export function omitPrivate(peer) {
   return _.omitBy(peer, (value, key) => key.startsWith('_'));
 }
 
+export function getStore(useStore) {
+  return { set: useStore.setState, get: useStore.getState };
+}
+
 export function getPeers(store) {
   return [...store.get().peers];
 }
@@ -36,10 +40,6 @@ export function getSubscribedMessages(store) {
 
 export function usePeer(peerId, usePeerStore) {
   return usePeerStore((state) => findPeer(state.peers, peerId));
-}
-
-export function useInit(usePeerStore) {
-  return usePeerStore((state) => state.init);
 }
 
 export function useSendUpdate(usePeerStore) {

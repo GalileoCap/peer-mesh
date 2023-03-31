@@ -1,3 +1,3 @@
-import { createPeerStore } from '@galileocap/peer-mesh';
+import { PeerStore } from '@galileocap/peer-mesh';
 
-export const usePeerStore = createPeerStore();
+export const usePeerStore = new PeerStore();

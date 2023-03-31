@@ -4,11 +4,11 @@ import Peer from 'peerjs';
 import { onData, subscribeToMessage } from './messages';
 import {
   findPeer, findPeerIdx, omitPrivate,
-  getPeers,
+  getStore, getPeers,
   MY_PEER, LEADER_PEER, ALL_PEERS,
 } from './utils.js';
 
-function init(defaultValues = {}, store) {
+function init(store, defaultValues = {}) {
   //TODO: Reset store
 
   const peer = new Peer();
@@ -96,18 +96,23 @@ function sendMessage(peerId, data, store) {
   } else findPeer(peers, peerId)._conn.send(data);
 }
 
-export function createPeerStore() {
-  return createZustand((set, get) => ({
-    peers: [],
+export class PeerStore {
+  constructor() {
+    this.store = createZustand((set, get) => ({
+      peers: [],
 
-    defaultValues: undefined,
-    subscribedMessages: {},
+      defaultValues: undefined,
+      subscribedMessages: {},
 
-    init: (defaultValues) => init(defaultValues, { set, get }),
-    sendUpdate: (cb) => sendUpdate(cb, { set, get }),
-    connectTo: (peerId, metadata) => connectTo(peerId, metadata, { set, get }),
-    sendMessage: (peerId, type, data) => sendMessage(peerId, {type, data}, { set, get }),
-    subscribeToMessage: (type, cb) => subscribeToMessage(type, cb, { set, get }),
-    unsubscribeFromMessage: (type) => subscribeToMessage(type, undefined, { set, get }),
-  }));
+      sendUpdate: (cb) => sendUpdate(cb, { set, get }),
+      connectTo: (peerId, metadata) => connectTo(peerId, metadata, { set, get }),
+      sendMessage: (peerId, type, data) => sendMessage(peerId, {type, data}, { set, get }),
+      subscribeToMessage: (type, cb) => subscribeToMessage(type, cb, { set, get }),
+      unsubscribeFromMessage: (type) => subscribeToMessage(type, undefined, { set, get }),
+    }));
+  }
+
+  init(defaultValues) {
+    init(getStore(this.store), defaultValues);
+  }
 }

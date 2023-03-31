@@ -10,7 +10,7 @@ import { PeerState, Loading } from './components';
 import { usePeerStore } from './peerStore';
 
 function Actions() {
-  const sendUpdate = useSendUpdate(usePeerStore);
+  const sendUpdate = useSendUpdate(usePeerStore.store);
   const onIncNumberA = () => sendUpdate((myState) => {
     myState.prevNumber = myState.number;
     myState.number++;
@@ -21,11 +21,11 @@ function Actions() {
   }));
 
   const [ peerId, setPeerId ] = useState('');
-  const connectTo = useConnectTo(usePeerStore);
+  const connectTo = useConnectTo(usePeerStore.store);
   const onChangePeerId = (event) => setPeerId(event.target.value);
   const onConnect = () => connectTo(peerId);
 
-  const sendMessage = useSendMessage(usePeerStore);
+  const sendMessage = useSendMessage(usePeerStore.store);
   const onMessage = () => sendMessage(ALL_PEERS, 'example', 'This is an example message');
 
   return (
@@ -40,15 +40,14 @@ function Actions() {
 }
 
 export default function App() {
-  const init = useInit(usePeerStore);
-  const subscribeToMessage = useSubscribeToMessage(usePeerStore);
+  const subscribeToMessage = useSubscribeToMessage(usePeerStore.store);
 
-  const myPeer = usePeer(MY_PEER, usePeerStore);
-  const leaderPeer = usePeer(LEADER_PEER, usePeerStore);
-  const allPeers = usePeer(ALL_PEERS, usePeerStore);
+  const myPeer = usePeer(MY_PEER, usePeerStore.store);
+  const leaderPeer = usePeer(LEADER_PEER, usePeerStore.store);
+  const allPeers = usePeer(ALL_PEERS, usePeerStore.store);
 
   useEffect(() => {
-    init({number: 0});
+    usePeerStore.init({number: 0});
     subscribeToMessage('example', console.log);
   }, []);
 
