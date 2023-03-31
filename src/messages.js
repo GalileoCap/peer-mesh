@@ -53,6 +53,7 @@ export function onData(sender, data, store) {
   switch (data.type) {
   case '_get': handleGet(sender, data.data, store); break;
   case '_set': handleSet(sender, data.data, store); break;
+  case '_connectTo': store.get().connectTo(data.data.peerId, data.data.metadata); break;
 
   default: console.error('Unhandled message (sender, data):', sender, data);
   }

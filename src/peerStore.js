@@ -25,6 +25,8 @@ function init(defaultValues = {}, store) {
   peer.on('connection', (conn) => {
     const peers = getPeers(store);
 
+    if (findPeer(peers, conn.peer) !== undefined) return; // Reject repeated peers
+
     peers.push({
       ...defaultValues,
       ...conn.metadata.state,
@@ -57,6 +59,8 @@ function connectTo(peerId, metadata = {}, store) {
   const peers = getPeers(store);
   const myPeer = findPeer(peers, MY_PEER);
 
+  if (findPeer(peers, peerId) !== undefined) return; // Skip reconnecting to peers
+
   const conn = myPeer._peer.connect(peerId, {
     metadata: {
       ...metadata,
@@ -77,6 +81,7 @@ function connectTo(peerId, metadata = {}, store) {
 
     store.set({ peers });
     store.get().sendMessage(conn.peer, '_get', [{key: 'update'}, {key: 'leader'}, {key: 'peers'}]);
+    store.get().sendMessage(ALL_PEERS, '_connectTo', {peerId, metadata}); // Tell my peers to connect too
   });
   conn.on('data', (data) => onData(peerId, data, store));
   //TODO: Other conn.on
@@ -101,7 +106,5 @@ export function createPeerStore() {
     sendUpdate: (cb) => sendUpdate(cb, { set, get }),
     connectTo: (peerId, metadata) => connectTo(peerId, metadata, { set, get }),
     sendMessage: (peerId, type, data) => sendMessage(peerId, {type, data}, { set, get }),
-
-    //case 'newPeer': handleNewPeer(draft, action); break;
   }));
 }
