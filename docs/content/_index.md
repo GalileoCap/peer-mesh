@@ -20,7 +20,9 @@ npm install @galileocap/peer-mesh
 <!-- TODO: List of examples -->
 
 ## [**API**]({{< relref "/api" >}})
+* [Peers]({{< relref "/api#Peers" >}})
 * [createPeerStore]({{< relref "/api#createPeerStore" >}})
+* [useInit]({{< relref "/api#useInit" >}})
 * [usePeer]({{< relref "/api#usePeer" >}})
 * [useSendUpdate]({{< relref "/api#useSendUpdate" >}})
 * [useConnectTo]({{< relref "/api#useConnectTo" >}})
