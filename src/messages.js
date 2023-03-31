@@ -1,3 +1,4 @@
+import { sendUpdate, connectTo, sendMessage } from './peerStore';
 import {
   findPeer, findPeerIdx,
   getPeers, getSubscribedMessages,
@@ -7,15 +8,15 @@ import {
 function handleGet(sender, data, store) {
   data.forEach((getQuery) => {
     switch (getQuery.key) {
-    case 'update': { store.get().sendUpdate(); break; }
+    case 'update': { sendUpdate(store); break; }
     case 'leader': {
       const leader = findPeer(store.get().peers, LEADER_PEER);
-      store.get().sendMessage(sender, '_set', [{key: 'leader', value: leader._id}]);
+      sendMessage(store, sender, '_set', [{key: 'leader', value: leader._id}]);
       break;
     }
     case 'peers': {
       const peers = getPeers(store);
-      store.get().sendMessage(sender, '_set', [{
+      sendMessage(store, sender, '_set', [{
         key: 'peers',
         peers: peers.filter((peer) => !peer._mine).map((peerState, idx) => peerState._id),
       }]);
@@ -52,14 +53,14 @@ function handleSet(sender, data, store) {
       break;
     }
 
-    case 'peers': { setQuery.peers.forEach((peerId) => store.get().connectTo(peerId)); break; }
+    case 'peers': { setQuery.peers.forEach((peerId) => connectTo(store, peerId)); break; }
 
     default: { console.error('Unhandled set (sender, setQuery):', sender, setQuery); }
     }
   });
 }
 
-export function subscribeToMessage(type, cb, store) {
+export function subscribeToMessage(store, type, cb) {
   const subscribedMessages = getSubscribedMessages(store);
 
   if (cb) subscribedMessages[type] = cb;
@@ -72,7 +73,7 @@ export function onData(sender, data, store) {
   switch (data.type) {
   case '_get': handleGet(sender, data.data, store); break;
   case '_set': handleSet(sender, data.data, store); break;
-  case '_connectTo': store.get().connectTo(data.data.peerId, data.data.metadata); break;
+  case '_connectTo': connectTo(store, data.data.peerId, data.data.metadata); break;
 
   default: {
     const cb = getSubscribedMessages(store)[data.type];
