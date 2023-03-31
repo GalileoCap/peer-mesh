@@ -59,7 +59,7 @@ function connectTo(peerId, metadata = {}, store) {
   const peers = getPeers(store);
   const myPeer = findPeer(peers, MY_PEER);
 
-  if (findPeer(peers, peerId) !== undefined) return; // Skip reconnecting to peers
+  if (findPeer(peers, peerId) !== undefined) return; // Skip reconnecting to peers and myself
 
   const conn = myPeer._peer.connect(peerId, {
     metadata: {
