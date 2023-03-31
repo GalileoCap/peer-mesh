@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
-  useMeshContext,
-  useDispatchUpdate, useDispatchConnectTo,
+  createPeerStore,
+  usePeer, useInit, useSendUpdate,
   MY_PEER, LEADER_PEER, ALL_PEERS,
 } from 'react-peer-mesh';
+
+const usePeerStore = createPeerStore();
 
 function PeerState({ state }) {
   const onCopyId = () => navigator.clipboard.writeText(state._id);
@@ -28,36 +30,47 @@ function Loading() {
 }
 
 export default function App() {
-  const myState = useMeshContext(MY_PEER)
-  const leaderState = useMeshContext(LEADER_PEER);
-  const allStates = useMeshContext(ALL_PEERS);
+  const init = useInit(usePeerStore);
+  const sendUpdate = useSendUpdate(usePeerStore);
 
-  const dispatchUpdate = useDispatchUpdate();
-  const onIncNumber = () => dispatchUpdate((draft) => {
-    draft.prevNumber = draft.number;
-    draft.number++;
+  const myPeer = usePeer(MY_PEER, usePeerStore);
+  const leaderPeer = usePeer(LEADER_PEER, usePeerStore);
+  const allPeers = usePeer(ALL_PEERS, usePeerStore);
+
+  useEffect(() => {
+    if (myPeer === undefined)
+      init({number: 0});
+  }, [myPeer]);
+
+  const onIncNumberA = () => sendUpdate((myState) => {
+    myState.prevNumber = myState.number;
+    myState.number++;
   });
+  const onIncNumberB = () => sendUpdate((myState) => ({
+    prevNumber: myState.number,
+    number: myState.number + 1,
+  }));
 
   const [ peerId, setPeerId ] = useState('');
   const onChange = (event) => setPeerId(event.target.value);
-  const dispatchConnectTo = useDispatchConnectTo();
-  const onConnect = () => dispatchConnectTo(peerId);
+  const onConnect = () => {}
 
   return (
     <div className="App">
       {
-        myState === undefined
+        myPeer === undefined
         ? <Loading />
         : <>
-          <PeerState state={myState} />
-          <PeerState state={leaderState} />
+          <PeerState state={myPeer} />
+          <PeerState state={leaderPeer} />
           <div>
-            <button onClick={onIncNumber}>IncNumber</button>
+            <button onClick={onIncNumberA}>IncNumberA</button>
+            <button onClick={onIncNumberB}>IncNumberB</button>
             <input type='text' onChange={onChange} value={peerId} />
             <button onClick={onConnect}>Connect</button>
           </div>
           <hr />
-          { allStates.map((peerState, idx) => <PeerState state={peerState} key={idx} />) }
+          { allPeers.map((peerState, idx) => <PeerState state={peerState} key={idx} />) }
         </>
       }
     </div>
