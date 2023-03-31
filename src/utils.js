@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export const MY_PEER = 0;
 export const LEADER_PEER = 1;
 export const ALL_PEERS = 2;
@@ -20,6 +22,10 @@ export function findPeerIdx(peers, peerId) {
   }
 }
 
+export function omitPrivate(peer) {
+  return _.omitBy(peer, (value, key) => key.startsWith('_'));
+}
+
 export function getPeers(store) {
   return [...store.get().peers];
 }
@@ -34,4 +40,12 @@ export function useInit(usePeerStore) {
 
 export function useSendUpdate(usePeerStore) {
   return usePeerStore((state) => state.sendUpdate);
+}
+
+export function useConnectTo(usePeerStore) {
+  return usePeerStore((state) => state.connectTo);
+}
+
+export function useSendMessage(usePeerStore) {
+  return usePeerStore((state) => state.sendMessage);
 }

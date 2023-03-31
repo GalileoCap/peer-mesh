@@ -1,9 +1,9 @@
 import { create as createZustand } from 'zustand';
 import Peer from 'peerjs';
-//import _ from 'lodash';
 
+import { onData } from './messages';
 import {
-  findPeer, findPeerIdx,
+  findPeer, findPeerIdx, omitPrivate,
   getPeers,
   MY_PEER, LEADER_PEER, ALL_PEERS,
 } from './utils.js';
@@ -22,14 +22,26 @@ function init(defaultValues = {}, store) {
       _leader: true,
     }],
   }));
+  peer.on('connection', (conn) => {
+    const peers = getPeers(store);
+
+    peers.push({
+      ...defaultValues,
+      ...conn.metadata.state,
+      _conn: conn,
+      _id: conn.peer,
+      _mine: false,
+      _leader: false,
+    });
+
+    conn.on('data', (data) => onData(conn.peer, data, store));
+
+    store.set({ peers });
+  });
   //TODO: other peer.on
 }
 
-function connectTo(peerId, metadata = {}, store) {
-  return;
-}
-
-function sendUpdate(cb, store) {
+function sendUpdate(cb = () => {}, store) {
   const peers = getPeers(store);
   const myIdx = findPeerIdx(peers, MY_PEER);
 
@@ -37,27 +49,59 @@ function sendUpdate(cb, store) {
   if (newState !== undefined)
     peers[myIdx] = {...peers[myIdx], ...newState};
 
-  peers.forEach((peer) => {
-    if (!peer._mine)
-      peer._conn.send({
-        type: 'update',
-        newState: peers[myIdx],
-      });
-  });
+  store.get().sendMessage(ALL_PEERS, '_set', [{key: 'update', state: omitPrivate(peers[myIdx]) }]);
   store.set({ peers });
 }
 
-export function createPeerStore(defaultValues) {
+function connectTo(peerId, metadata = {}, store) {
+  const peers = getPeers(store);
+  const myPeer = findPeer(peers, MY_PEER);
+
+  const conn = myPeer._peer.connect(peerId, {
+    metadata: {
+      ...metadata,
+      state: omitPrivate(myPeer),
+      peers: peers.filter((peer) => peer !== myPeer).map((peerState, idx) => peerState._id), //TODO: Also share their state
+    },
+  });
+  conn.on('open', () => {
+    const peers = getPeers(store);
+
+    peers.push({
+      ...store.get().defaultValues,
+      _conn: conn,
+      _id: conn.peer,
+      _mine: false,
+      _leader: false,
+    });
+
+    store.set({ peers });
+    store.get().sendMessage(conn.peer, '_get', [{key: 'update'}, {key: 'leader'}, {key: 'peers'}]);
+  });
+  conn.on('data', (data) => onData(peerId, data, store));
+  //TODO: Other conn.on
+}
+
+function sendMessage(peerId, data, store) {
+  const peers = getPeers(store);
+  if (peerId === ALL_PEERS) {
+    peers.forEach((peer) => {
+      if (!peer._mine) peer._conn.send(data);
+    });
+  } else findPeer(peers, peerId)._conn.send(data);
+}
+
+export function createPeerStore() {
   return createZustand((set, get) => ({
     peers: [],
 
     defaultValues: undefined,
 
     init: (defaultValues) => init(defaultValues, { set, get }),
-    connectTo: (peerId, metadata) => connectTo(peerId, metadata, { set, get }),
     sendUpdate: (cb) => sendUpdate(cb, { set, get }),
+    connectTo: (peerId, metadata) => connectTo(peerId, metadata, { set, get }),
+    sendMessage: (peerId, type, data) => sendMessage(peerId, {type, data}, { set, get }),
 
     //case 'newPeer': handleNewPeer(draft, action); break;
-    //case 'onData': handleOnData(draft, action); break;
   }));
 }

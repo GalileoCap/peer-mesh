@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   createPeerStore,
-  usePeer, useInit, useSendUpdate,
+  usePeer, useInit, useSendUpdate, useConnectTo,
   MY_PEER, LEADER_PEER, ALL_PEERS,
 } from 'react-peer-mesh';
 
@@ -32,6 +32,7 @@ function Loading() {
 export default function App() {
   const init = useInit(usePeerStore);
   const sendUpdate = useSendUpdate(usePeerStore);
+  const connectTo = useConnectTo(usePeerStore);
 
   const myPeer = usePeer(MY_PEER, usePeerStore);
   const leaderPeer = usePeer(LEADER_PEER, usePeerStore);
@@ -53,7 +54,7 @@ export default function App() {
 
   const [ peerId, setPeerId ] = useState('');
   const onChange = (event) => setPeerId(event.target.value);
-  const onConnect = () => {}
+  const onConnect = () => connectTo(peerId);
 
   return (
     <div className="App">
