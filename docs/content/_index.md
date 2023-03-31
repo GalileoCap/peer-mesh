@@ -3,39 +3,27 @@ title: Introduction
 type: docs
 ---
 
-# Acerbo datus maxime
+# Peer Mesh
 
-{{< columns >}}
-## Astris ipse furtiva
+A wrapper for [PeerJS](https://peerjs.com/) that makes reactive peer-to-peer connections easy using [Zustand](https://zustand-demo.pmnd.rs/).
 
-Est in vagis et Pittheus tu arge accipiter regia iram vocatur nurus. Omnes ut
-olivae sensit **arma sorori** deducit, inesset **crudus**, ego vetuere aliis,
-modo arsit? Utinam rapta fiducia valuere litora _adicit cursu_, ad facies
+<!--TODO: Live demo like this https://codesandbox.io/s/github/pmndrs/zustand/tree/main/examples/demo-->
 
-<--->
+## Installation
+```basquick
+npm install @galileocap/peer-mesh
+```
 
-## Suis quot vota
+## [**Quick Start**]({{< relref "/quick-start" >}})
 
-Ea _furtique_ risere fratres edidit terrae magis. Colla tam mihi tenebat:
-miseram excita suadent es pecudes iam. Concilio _quam_ velatus posset ait quod
-nunc! Fragosis suae dextra geruntur functus vulgata.
-{{< /columns >}}
+## [**Examples**]({{< relref "/examples" >}})
+<!-- TODO: List of examples -->
 
-
-## Tempora nisi nunc
-
-Lorem **markdownum** emicat gestu. Cannis sol pressit ducta. **Est** Idaei,
-tremens ausim se tutaeque, illi ulnis hausit, sed, lumina cutem. Quae avis
-sequens!
-
-    var panel = ram_design;
-    if (backup + system) {
-        file.readPoint = network_native;
-        sidebar_engine_device(cell_tftp_raster,
-                dual_login_paper.adf_vci.application_reader_design(
-                graphicsNvramCdma, lpi_footer_snmp, integer_model));
-    }
-
-## Locis suis novi cum suoque decidit eadem
-
-Idmoniae ripis, at aves, ali missa adest, ut _et autem_, et ab?
+## [**API**]({{< relref "/api" >}})
+* [createPeerStore]({{< relref "/api#createPeerStore" >}})
+* [usePeer]({{< relref "/api#usePeer" >}})
+* [useSendUpdate]({{< relref "/api#useSendUpdate" >}})
+* [useConnectTo]({{< relref "/api#useConnectTo" >}})
+* [useSendMessage]({{< relref "/api#useSendMessage" >}})
+* [useSubscribeToMessage]({{< relref "/api#useSubscribeToMessage" >}})
+* [useUnsubscribeFromMessage]({{< relref "/api#useUnsubscribeFromMessage" >}})
