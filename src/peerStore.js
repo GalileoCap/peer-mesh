@@ -1,7 +1,7 @@
 import { create as createZustand } from 'zustand';
 import Peer from 'peerjs';
 
-import { onData } from './messages';
+import { onData, subscribeToMessage } from './messages';
 import {
   findPeer, findPeerIdx, omitPrivate,
   getPeers,
@@ -101,10 +101,13 @@ export function createPeerStore() {
     peers: [],
 
     defaultValues: undefined,
+    subscribedMessages: {},
 
     init: (defaultValues) => init(defaultValues, { set, get }),
     sendUpdate: (cb) => sendUpdate(cb, { set, get }),
     connectTo: (peerId, metadata) => connectTo(peerId, metadata, { set, get }),
     sendMessage: (peerId, type, data) => sendMessage(peerId, {type, data}, { set, get }),
+    subscribeToMessage: (type, cb) => subscribeToMessage(type, cb, { set, get }),
+    unsubscribeFromMessage: (type) => subscribeToMessage(type, undefined, { set, get }),
   }));
 }

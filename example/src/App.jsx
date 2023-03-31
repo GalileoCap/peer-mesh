@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import {
   createPeerStore,
-  usePeer, useInit, useSendUpdate, useConnectTo,
+  usePeer, useInit, useSendUpdate, useConnectTo, useSendMessage,
+  useSubscribeToMessage, useUnsubscribeFromMessage,
   MY_PEER, LEADER_PEER, ALL_PEERS,
 } from 'react-peer-mesh';
 
@@ -33,6 +34,8 @@ export default function App() {
   const init = useInit(usePeerStore);
   const sendUpdate = useSendUpdate(usePeerStore);
   const connectTo = useConnectTo(usePeerStore);
+  const sendMessage = useSendMessage(usePeerStore);
+  const subscribeToMessage = useSubscribeToMessage(usePeerStore);
 
   const myPeer = usePeer(MY_PEER, usePeerStore);
   const leaderPeer = usePeer(LEADER_PEER, usePeerStore);
@@ -53,8 +56,13 @@ export default function App() {
   }));
 
   const [ peerId, setPeerId ] = useState('');
-  const onChange = (event) => setPeerId(event.target.value);
+  const onChangePeerId = (event) => setPeerId(event.target.value);
   const onConnect = () => connectTo(peerId);
+
+  const onMessage = () => sendMessage(ALL_PEERS, 'example', 'This is an example message');
+  useEffect(() => {
+    subscribeToMessage('example', console.log);
+  }, []);
 
   return (
     <div className="App">
@@ -65,10 +73,11 @@ export default function App() {
           <PeerState state={myPeer} />
           <PeerState state={leaderPeer} />
           <div>
+            <input type='text' onChange={onChangePeerId} value={peerId} />
+            <button onClick={onConnect}>Connect</button>
             <button onClick={onIncNumberA}>IncNumberA</button>
             <button onClick={onIncNumberB}>IncNumberB</button>
-            <input type='text' onChange={onChange} value={peerId} />
-            <button onClick={onConnect}>Connect</button>
+            <button onClick={onMessage}>Send message</button>
           </div>
           <hr />
           { allPeers.map((peerState, idx) => <PeerState state={peerState} key={idx} />) }

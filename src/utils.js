@@ -30,6 +30,10 @@ export function getPeers(store) {
   return [...store.get().peers];
 }
 
+export function getSubscribedMessages(store) {
+  return {...store.get().subscribedMessages};
+}
+
 export function usePeer(peerId, usePeerStore) {
   return usePeerStore((state) => findPeer(state.peers, peerId));
 }
@@ -48,4 +52,12 @@ export function useConnectTo(usePeerStore) {
 
 export function useSendMessage(usePeerStore) {
   return usePeerStore((state) => state.sendMessage);
+}
+
+export function useSubscribeToMessage(usePeerStore) {
+  return usePeerStore((state) => state.subscribeToMessage);
+}
+
+export function useUnsubscribeFromMessage(usePeerStore) {
+  return usePeerStore((state) => state.unsubscribeFromMessage);
 }

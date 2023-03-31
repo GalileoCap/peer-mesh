@@ -1,6 +1,6 @@
 import {
   findPeer, findPeerIdx,
-  getPeers,
+  getPeers, getSubscribedMessages,
   LEADER_PEER,
 } from './utils';
 
@@ -59,12 +59,25 @@ function handleSet(sender, data, store) {
   });
 }
 
+export function subscribeToMessage(type, cb, store) {
+  const subscribedMessages = getSubscribedMessages(store);
+
+  if (cb) subscribedMessages[type] = cb;
+  else delete subscribedMessages[type];
+
+  store.set({ subscribedMessages });
+}
+
 export function onData(sender, data, store) {
   switch (data.type) {
   case '_get': handleGet(sender, data.data, store); break;
   case '_set': handleSet(sender, data.data, store); break;
   case '_connectTo': store.get().connectTo(data.data.peerId, data.data.metadata); break;
 
-  default: console.error('Unhandled message (sender, data):', sender, data);
+  default: {
+    const cb = getSubscribedMessages(store)[data.type];
+    if (cb) cb(data.type, data.data, store);
+    else console.error('Unhandled message (sender, data):', sender, data);
+  }
   }
 }
