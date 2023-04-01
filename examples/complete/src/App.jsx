@@ -37,7 +37,6 @@ export default function App() {
   const allPeers = usePeerStore.usePeer(ALL_PEERS);
 
   useEffect(() => {
-    usePeerStore.init({number: 0});
     usePeerStore.subscribeToMessage('example', console.log);
   }, []);
 

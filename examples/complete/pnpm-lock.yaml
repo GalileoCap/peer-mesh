@@ -2,8 +2,8 @@ lockfileVersion: '6.0'
 
 dependencies:
   '@galileocap/peer-mesh':
-    specifier: link:..
-    version: link:..
+    specifier: link:../..
+    version: link:../..
   react:
     specifier: ^18.2.0
     version: 18.2.0
