@@ -108,6 +108,7 @@ export class PeerStore {
   }
 
   init(defaultValues) { return init(getStore(this.store), defaultValues); }
+  getPeer(peerId) { return findPeer(this.store.getState().peers, peerId); }
   usePeer(peerId) { return usePeer(this.store, peerId); }
   sendUpdate(cb) { return sendUpdate(getStore(this.store), cb); }
   connectTo(peerId, metadata) { return connectTo(getStore(this.store), peerId, metadata); }
