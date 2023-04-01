@@ -22,9 +22,6 @@ import { PeerStore } from '@galileocap/peer-mesh';
 const usePeerStore = new PeerStore();
 ```
 
-## [**Examples**]({{< relref "/examples" >}})
-<!-- TODO: List of examples -->
-
 ## [**API**]({{< relref "/api" >}})
 * [PeerStore]({{< relref "/api#peerstore" >}})
 * [init]({{< relref "/api#init" >}})

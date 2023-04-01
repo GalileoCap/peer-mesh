@@ -5,10 +5,6 @@ headless: true
 * [**Quick Start**]({{< relref "/quick-start" >}})
 <br />
 
-* [**Examples**]({{< relref "/examples" >}})
-<!-- TODO: List of examples -->
-<br />
-
 * [**API**]({{< relref "/api" >}})
 * [PeerStore]({{< relref "/api#peerstore" >}})
 * [init]({{< relref "/api#init" >}})
