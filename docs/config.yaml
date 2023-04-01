@@ -1,4 +1,4 @@
-baseURL: 'https://dev.galileocap.me/peer-mesh'
+baseURL: 'https://dev.galileocap.me/peermesh'
 languageCode: 'en-us'
 title: 'Peer-Mesh'
 theme: 'hugo-book'

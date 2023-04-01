@@ -8,7 +8,7 @@ A wrapper for [PeerJS](https://peerjs.com/) that makes reactive peer-to-peer con
 npm install @galileocap/peer-mesh
 ```
 
-## [Documentation](https://dev.galileocap.me/peer-mesh)
+## [Documentation](https://dev.galileocap.me/peermesh)
 
 ## Quick Start
 
