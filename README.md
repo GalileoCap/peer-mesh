@@ -120,3 +120,49 @@ export default function App() {
   );
 }
 ```
+
+## Update the shared state
+```jsx
+import { useState } from 'react';
+import { usePeerStore } from './store';
+import { ALL_PEERS } from '@galileocap/peer-mesh';
+
+function Peer({ peer }) {
+  return <p>id: {peer._id}, number: {peer.number}</p>;
+}
+
+function Connect({ }) {
+  const [ peerId, setPeerId ] = useState('');
+  const onChangePeerId = (event) => setPeerId(event.target.value);
+  const onConnect = () => usePeerStore.connectTo(peerId);
+
+  return (
+    <div>
+      <input onChange={onChangePeerId} value={peerId} />
+      <button onClick={onConnect}>Connect</button>
+    </div>
+  );
+}
+
+export default function App() {
+  const allPeers = usePeerStore.usePeer(ALL_PEERS);
+  const onIncrementMyNumber = () => {
+    usePeerStore.sendUpdate((myPeer) => { myPeer.number++ });
+  }
+
+  const sharedNumber = usePeerStore.useShared().number;
+  const onIncrementSharedNumber = () => {
+    usePeerStore.sharedUpdate((sharedState) => { sharedState.number++; });
+  }
+
+  return (
+    <div id='App'>
+      <Connect />
+      <button onClick={onIncrementMyNumber}>Increment your number</button>
+      <button onClick={onIncrementSharedNumber}>Increment shared number</button>
+      <p>Shared number: {sharedNumber}</p>
+      {allPeers.map((peer, idx) => <Peer peer={peer} key={idx} />)}
+    </div>
+  );
+}
+```
