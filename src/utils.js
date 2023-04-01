@@ -34,10 +34,14 @@ export function getPeers(store) {
   return [...store.get().peers];
 }
 
+export function usePeer(useStore, peerId) {
+  return useStore((state) => findPeer(state.peers, peerId));
+}
+
 export function getSubscribedMessages(store) {
   return {...store.get().subscribedMessages};
 }
 
-export function usePeer(useStore, peerId) {
-  return useStore((state) => findPeer(state.peers, peerId));
+export function getShared(store) {
+  return {...store.get().sharedState};
 }

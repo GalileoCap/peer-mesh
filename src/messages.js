@@ -1,7 +1,7 @@
 import { sendUpdate, connectTo, sendMessage } from './peerStore';
 import {
   findPeer, findPeerIdx,
-  getPeers, getSubscribedMessages,
+  getPeers, getSubscribedMessages, getShared,
   LEADER_PEER,
 } from './utils';
 
@@ -20,6 +20,12 @@ function handleGet(sender, data, store) {
         key: 'peers',
         peers: peers.filter((peer) => !peer._mine).map((peerState, idx) => peerState._id),
       }]);
+      break;
+    }
+
+    case 'shared': {
+      const sharedState = getShared(store);
+      sendMessage(store, sender, '_set', [{ key: 'shared', sharedState }])
       break;
     }
 
@@ -50,6 +56,11 @@ function handleSet(sender, data, store) {
       peers[senderIdx] = {...peers[senderIdx], ...setQuery.state};
 
       store.set({ peers });
+      break;
+    }
+
+    case 'shared': {
+      store.set({ sharedState: setQuery.sharedState });
       break;
     }
 

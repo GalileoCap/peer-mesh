@@ -24,10 +24,17 @@ export default function App() {
 		usePeerStore.sendUpdate((myPeer) => { myPeer.number++ });
 	}
 
+  const sharedNumber = usePeerStore.useShared().number;
+  const onIncrementSharedNumber = () => {
+		usePeerStore.sharedUpdate((sharedState) => { sharedState.number++; });
+	}
+
   return (
     <div id='App'>
       <Connect />
 			<button onClick={onIncrementMyNumber}>Increment your number</button>
+      <button onClick={onIncrementSharedNumber}>Increment shared number</button>
+      <p>Shared number: {sharedNumber}</p>
       {allPeers.map((peer, idx) => <Peer peer={peer} key={idx} />)}
     </div>
   );

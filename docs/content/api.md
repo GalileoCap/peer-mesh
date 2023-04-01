@@ -41,6 +41,26 @@ Uses the callback function to update your peer's state and sends that update to 
 The callback function may update the peer's state or return the new value.  
 **WARNING:** Keys starting with `'_'` will be ignored when sending updates.
 
+### getShared
+```jsx
+usePeerStore.getShared();
+```
+Returns the shared state.  
+**WARNING:** On React use [`useShared`](#useshared).
+
+### useShared
+```jsx
+usePeerStore.useShared();
+```
+Returns the shared state.
+
+### sharedUpdate
+```jsx
+usePeerStore.sharedUpdate(cb = (sharedState) => {});
+```
+Uses the callback function to update the shared state and sends that update to the other peers.  
+The callback function may update the shared state or return the new value.  
+
 ### connectTo
 ```jsx
 usePeerStore.connectTo(peerId = '<peerId>', metadata = {});
