@@ -10,22 +10,29 @@ A wrapper for [PeerJS](https://peerjs.com/) that makes reactive peer-to-peer con
 <!--TODO: Live demo like this https://codesandbox.io/s/github/pmndrs/zustand/tree/main/examples/demo-->
 
 ## Installation
-```basquick
+```bash
 npm install @galileocap/peer-mesh
 ```
 
+
 ## [**Quick Start**]({{< relref "/quick-start" >}})
+### Basic use
+```jsx
+import { PeerStore } from '@galileocap/peer-mesh';
+const usePeerStore = new PeerStore();
+```
 
 ## [**Examples**]({{< relref "/examples" >}})
 <!-- TODO: List of examples -->
 
 ## [**API**]({{< relref "/api" >}})
-* [Peers]({{< relref "/api#Peers" >}})
-* [createPeerStore]({{< relref "/api#createPeerStore" >}})
-* [useInit]({{< relref "/api#useInit" >}})
-* [usePeer]({{< relref "/api#usePeer" >}})
-* [useSendUpdate]({{< relref "/api#useSendUpdate" >}})
-* [useConnectTo]({{< relref "/api#useConnectTo" >}})
-* [useSendMessage]({{< relref "/api#useSendMessage" >}})
-* [useSubscribeToMessage]({{< relref "/api#useSubscribeToMessage" >}})
-* [useUnsubscribeFromMessage]({{< relref "/api#useUnsubscribeFromMessage" >}})
+* [PeerStore]({{< relref "/api#peerstore" >}})
+* [init]({{< relref "/api#init" >}})
+* [getPeer]({{< relref "/api#getpeer" >}})
+* [usePeer]({{< relref "/api#usepeer" >}})
+* [sendUpdate]({{< relref "/api#sendupdate" >}})
+* [connectTo]({{< relref "/api#connectto" >}})
+* [sendMessage]({{< relref "/api#sendmessage" >}})
+* [subscribeToMessage]({{< relref "/api#subscribetomessage" >}})
+* [unsubscribeFromMessage]({{< relref "/api#unsubscribefrommessage" >}})
+* [Peers]({{< relref "/api#peers" >}})

@@ -10,16 +10,17 @@ headless: true
 <br />
 
 * [**API**]({{< relref "/api" >}})
-* [Peers]({{< relref "/api#Peers" >}})
-* [createPeerStore]({{< relref "/api#createPeerStore" >}})
-* [useInit]({{< relref "/api#useInit" >}})
-* [usePeer]({{< relref "/api#usePeer" >}})
-* [useSendUpdate]({{< relref "/api#useSendUpdate" >}})
-* [useConnectTo]({{< relref "/api#useConnectTo" >}})
-* [useSendMessage]({{< relref "/api#useSendMessage" >}})
-* [useSubscribeToMessage]({{< relref "/api#useSubscribeToMessage" >}})
-* [useUnsubscribeFromMessage]({{< relref "/api#useUnsubscribeFromMessage" >}})
+* [PeerStore]({{< relref "/api#peerstore" >}})
+* [init]({{< relref "/api#init" >}})
+* [getPeer]({{< relref "/api#getpeer" >}})
+* [usePeer]({{< relref "/api#usepeer" >}})
+* [sendUpdate]({{< relref "/api#sendupdate" >}})
+* [connectTo]({{< relref "/api#connectto" >}})
+* [sendMessage]({{< relref "/api#sendmessage" >}})
+* [subscribeToMessage]({{< relref "/api#subscribetomessage" >}})
+* [unsubscribeFromMessage]({{< relref "/api#unsubscribefrommessage" >}})
+* [Peers]({{< relref "/api#peers" >}})
 <br />
 
-- [**GitHub**](https://github.com/GalileoCap/peer-mesh)
-- [**Blog**]({{< relref "/posts" >}})
+* [**GitHub**](https://github.com/GalileoCap/peer-mesh)
+* [**Blog**]({{< relref "/posts" >}})
