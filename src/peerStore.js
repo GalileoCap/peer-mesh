@@ -8,21 +8,25 @@ import {
   MY_PEER, LEADER_PEER, ALL_PEERS,
 } from './utils.js';
 
-export function init(store, dfltPeerState = {}, dfltSharedState = {}) {
+export function init(store, dfltPeerState = {}, dfltSharedState = {}, cb = () => {}) {
   //TODO: Reset store
 
   const peer = new Peer();
-  peer.on('open', () => store.set({
-    dfltPeerState,
-    sharedState: dfltSharedState,
-    peers: [{
-      ...dfltPeerState,
-      _peer: peer,
-      _id: peer.id,
-      _mine: true,
-      _leader: true,
-    }],
-  }));
+  peer.on('open', () => {
+    store.set({
+      dfltPeerState,
+      sharedState: dfltSharedState,
+      peers: [{
+        ...dfltPeerState,
+        _peer: peer,
+        _id: peer.id,
+        _mine: true,
+        _leader: true,
+      }],
+    });
+
+    cb();
+  });
   peer.on('connection', (conn) => {
     const peers = getPeers(store);
 
@@ -119,7 +123,7 @@ export class PeerStore {
     }));
   }
 
-  init(dfltPeerState, dfltSharedState) { return init(getStore(this.store), dfltPeerState, dfltSharedState); }
+  init(dfltPeerState, dfltSharedState, cb) { return init(getStore(this.store), dfltPeerState, dfltSharedState, cb); }
   getPeer(peerId) { return findPeer(this.store.getState().peers, peerId); }
   usePeer(peerId) { return usePeer(this.store, peerId); }
   getShared() { return this.store.getState().sharedState; }
