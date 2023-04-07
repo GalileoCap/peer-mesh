@@ -70,7 +70,7 @@ export function sharedUpdate(store, cb = () => {}) {
   store.set({ sharedState });
 }
 
-export function connectTo(store, peerId, metadata = {}) {
+export function connectTo(store, peerId, metadata = {}, cb = () => {}) {
   const peers = getPeers(store);
   const myPeer = findPeer(peers, MY_PEER);
 
@@ -97,6 +97,8 @@ export function connectTo(store, peerId, metadata = {}) {
     store.set({ peers });
     sendMessage(store, conn.peer, '_get', [{key: 'update'}, {key: 'shared'}, {key: 'leader'}, {key: 'peers'}]);
     sendMessage(store, ALL_PEERS, '_connectTo', {peerId, metadata}); // Tell my peers to connect too
+
+    cb();
   });
   conn.on('data', (data) => onData(peerId, data, store));
   //TODO: Other conn.on
@@ -130,7 +132,7 @@ export class PeerStore {
   useShared() { return this.store((state) => state.sharedState); }
   sendUpdate(cb) { return sendUpdate(getStore(this.store), cb); }
   sharedUpdate(cb) { return sharedUpdate(getStore(this.store), cb); }
-  connectTo(peerId, metadata) { return connectTo(getStore(this.store), peerId, metadata); }
+  connectTo(peerId, metadata, cb) { return connectTo(getStore(this.store), peerId, metadata, cb); }
   sendMessage(peerId, type, data) { return sendMessage(getStore(this.store), peerId, type, data); }
   subscribeToMessage(type, cb) { return subscribeToMessage(getStore(this.store), type, cb); }
   unsubscribeFromMessage(type) { return subscribeToMessage(getStore(this.store), type, undefined); }

@@ -64,10 +64,11 @@ The callback function may update the shared state or return the new value.
 
 ### connectTo
 ```jsx
-usePeerStore.connectTo(peerId = '<peerId>', metadata = {});
+usePeerStore.connectTo(peerId = '<peerId>', metadata = {}, cb = () => {});
 ```
 Connects to another peer.  
 The metadata is ignored for now.  
+The callback function is called once the connection is successful.
 
 ### sendMessage
 ```jsx

@@ -16,7 +16,7 @@ function Actions() {
 
   const [ peerId, setPeerId ] = useState('');
   const onChangePeerId = (event) => setPeerId(event.target.value);
-  const onConnect = () => usePeerStore.connectTo(peerId);
+  const onConnect = () => usePeerStore.connectTo(peerId, {}, () => console.log('Connect!'));
 
   const onMessage = () => usePeerStore.sendMessage(ALL_PEERS, 'example', 'This is an example message');
 
