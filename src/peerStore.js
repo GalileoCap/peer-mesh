@@ -8,44 +8,47 @@ import {
   MY_PEER, LEADER_PEER, ALL_PEERS,
 } from './utils.js';
 
-export function init(store, dfltPeerState = {}, dfltSharedState = {}, cb = () => {}) {
-  //TODO: Reset store
+export function init(store, dfltPeerState = {}, dfltSharedState = {}) {
+  return new Promise((resolve, reject) => {
+    //TODO: Reset store
 
-  const peer = new Peer();
-  peer.on('open', () => {
-    store.set({
-      dfltPeerState,
-      sharedState: dfltSharedState,
-      peers: [{
+    const peer = new Peer();
+    peer.on('open', () => {
+      const myState = {
         ...dfltPeerState,
         _peer: peer,
         _id: peer.id,
         _mine: true,
         _leader: true,
-      }],
+      };
+
+      store.set({
+        dfltPeerState,
+        sharedState: dfltSharedState,
+        peers: [myState],
+      });
+      resolve(myState);
     });
+    peer.on('connection', (conn) => {
+      const peers = getPeers(store);
 
-    cb();
-  });
-  peer.on('connection', (conn) => {
-    const peers = getPeers(store);
+      if (findPeer(peers, conn.peer) !== undefined) return; // Reject repeated peers
 
-    if (findPeer(peers, conn.peer) !== undefined) return; // Reject repeated peers
+      peers.push({
+        ...dfltPeerState,
+        ...conn.metadata.state,
+        _conn: conn,
+        _id: conn.peer,
+        _mine: false,
+        _leader: false,
+      });
 
-    peers.push({
-      ...dfltPeerState,
-      ...conn.metadata.state,
-      _conn: conn,
-      _id: conn.peer,
-      _mine: false,
-      _leader: false,
+      conn.on('data', (data) => onData(conn.peer, data, store));
+
+      store.set({ peers });
     });
-
-    conn.on('data', (data) => onData(conn.peer, data, store));
-
-    store.set({ peers });
+    //TODO: other peer.on
   });
-  //TODO: other peer.on
 }
 
 export function sendUpdate(store, cb = () => {}) {
@@ -125,7 +128,7 @@ export class PeerStore {
     }));
   }
 
-  init(dfltPeerState, dfltSharedState, cb) { return init(getStore(this.store), dfltPeerState, dfltSharedState, cb); }
+  init(dfltPeerState, dfltSharedState) { return init(getStore(this.store), dfltPeerState, dfltSharedState); }
   getPeer(peerId) { return findPeer(this.store.getState().peers, peerId); }
   usePeer(peerId) { return usePeer(this.store, peerId); }
   getShared() { return this.store.getState().sharedState; }

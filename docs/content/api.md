@@ -15,11 +15,10 @@ Used in all other methods.
 
 ### init
 ```jsx
-usePeerStore.init(dfltPeerState = {}, dfltSharedState = {}, cb = () => {});
+usePeerStore.init(dfltPeerState = {}, dfltSharedState = {});
 ```
-Initializes the store and gets you a peer.  
+Initializes the store and gets you a peer. Returns a promise that resolves once the peer has been initialized.  
 The default values will be used when constructing a peer (yours and when connecting to others).  
-The callback function will be called once your peer has been created.  
 
 ### getPeer
 ```jsx
